@@ -40,12 +40,6 @@ def single_point(orca_path, config, charge, mult, prefix="mp2_"):
     )
     return config
 
-def optimize(config, charge, mult, out, fmax=0.01, nsteps=100):
-    calc = get_calc(charge, mult)
-    config.calc = calc
-    opt = LBFGS(config)
-    opt.run(fmax=fmax, steps=nsteps)
-    write(out, opt.atoms)
 
 def main():
     args = parse_args()
