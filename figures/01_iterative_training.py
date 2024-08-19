@@ -1,2 +1,3 @@
 from ase.io import read
 import numpy as np
+from matplotlib import pyplot as plt
