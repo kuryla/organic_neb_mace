@@ -178,9 +178,5 @@ ax4.plot([0.32, 0.4], [0.44, 0.42], transform=ax4.transAxes, linewidth=2, color=
 ax4.plot([0.52, 0.6], [0.42, 0.44], transform=ax4.transAxes, linewidth=2, color='#666666', ls='--')
 ax5.plot([0.47, 0.63], [0.41, 0.46], transform=ax5.transAxes, linewidth=2, color='#666666', ls='--')
 
-
-
 plt.tight_layout()
 plt.savefig('../figures/solv-neb.pdf')
-
-plt.show()
