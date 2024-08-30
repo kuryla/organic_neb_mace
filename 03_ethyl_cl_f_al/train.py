@@ -31,26 +31,11 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def committee_error(dyn, selector=str, reg=0.2):
-    if isinstance(dyn.atoms, NEB):
-        images = dyn.atoms.images[1:-1]
-        errors = []
-    else:
-        pass
-
-    selector_types = ["energy", "forces"]
-
-    if selector == "energy":
-        errors = [np.sqrt(image.calc.results["energy_var"]) for image in images]
-    elif selector == "forces":
-        for image in images:
-            f_err = np.sqrt(np.sum(np.var(image.calc.results["forces_comm"], axis=0), axis=1))
-            f_mean = np.linalg.norm(image.calc.results["forces"], axis=1)
-            errors.append(np.max(f_err / (f_mean + reg)))
-    else:
-        raise ValueError(f"Incorrect selector value. Must be one of {selector_types}.")
+def committee_error(dyn):
+    images = dyn.atoms.images[1:-1]
+    errors = []
+    errors = [np.sqrt(image.calc.results["energy_var"]) for image in images]
     dyn.atoms.errors = np.array(errors)
-    print(np.max(dyn.atoms.errors))
 
 """
     Selection function that combines mace energy and mace disagreement
@@ -151,7 +136,7 @@ def main():
             image.calc = MACECalculator(model_paths=model, default_dtype="float64", device="cuda")
         # Optimize:
         dyn = FIRE(neb)
-        dyn.attach(committee_error, interval=1, dyn=dyn, selector="energy")
+        dyn.attach(committee_error, interval=1, dyn=dyn)
         """ Run NEB """
         dyn.run(fmax=neb_fmax, steps=neb_steps)
         write("neb.xyz", dyn.atoms.images)
