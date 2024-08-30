@@ -1,13 +1,22 @@
-This is a repository for "Finding reaction pathways efficiently using reaction databases and active learning".
+# Repository for "Finding reaction pathways efficiently using reaction databases and active learning".
 
-Contents:
 
-01_iterative_training
+# Table of Contents
+1. [Iterative training](#example)
+2. [Model for finding SN2 reaction NEBs](#example2)
+3. [Active learning on ethyl chloride + fluoride ion](#third-example)
+4. [Active learning on ethyl chloride + fluoride ion + 4 H_2O](#fourth-example)
+5. [Figures](#figures)
 
-02_model_for_sn2_nebs
 
-03_ethyl_cl_f_al
+## Iterative training
 
-04_water_ethyl_cl_f_al
+## Model for finding SN2 reaction NEBs
 
-figures: scripts to make figures used in the manuscript
+## Active learning on ethyl chloride + fluoride ion
+
+## Active learning on ethyl chloride + fluoride ion + 4 H_2O
+
+## Figures
+
+Scripts to make figures used in the manuscript
