@@ -1,107 +1,76 @@
 import numpy as np
 from ase.io import read, write
+import argparse
+import os
 
-indices = np.arange(1778)
+def main(args):
+    ntrain = args.ntrain
+    nvalid = args.nvalid
+    ntest = args.ntest
 
+    indices = np.arange(ntrain + nvalid + ntest)
 
-ntrain = 1422
-nvalid = 178
-ntest = 178
+    np.random.seed(123)
 
-np.random.seed(123)
+    """ Randomly select which reactions go into train, valid, test splits """
 
-train_id = np.random.choice(indices, size=ntrain, replace=False)
-indices = np.setdiff1d(indices, train_id)
-print(len(indices), len(train_id))
+    train_id = np.random.choice(indices, size=ntrain, replace=False)
+    indices = np.setdiff1d(indices, train_id)
 
-valid_id = np.random.choice(indices, size=nvalid, replace=False)
-indices = np.setdiff1d(indices, valid_id)
-print(len(indices), len(valid_id))
+    valid_id = np.random.choice(indices, size=nvalid, replace=False)
+    indices = np.setdiff1d(indices, valid_id)
 
-test_id = np.random.choice(indices, size=ntest, replace=False)
-indices = np.setdiff1d(indices, test_id)
-print(len(indices), len(test_id))
+    test_id = np.random.choice(indices, size=ntest, replace=False)
+    indices = np.setdiff1d(indices, test_id)
 
+    ''' Generate training set, which may contain the rattled geometries '''
 
-''' Generate train, valid, test sets for no rattle '''
+    e0s = read(args.E0s_file, ':')
+    reactants = read(args.reactants_input, ':')
+    products = read(args.products_input, ':')
+    transition_states = read(args.ts_input, ':')
 
-e0s = read('./e0s.xyz', ':')
+    train = e0s \
+        + [reactants[i] for i in train_id] \
+        + [transition_states[i] for i in train_id] \
+        + [products[i] for i in train_id]
 
-r_0 = read('./no-rattle/r-mp2.xyz', ':')
-p_0 = read('./no-rattle/p-mp2.xyz', ':')
-ts_0 = read('./no-rattle/ts-mp2.xyz', ':')
+    """ Generate valid, and test sets, which contain the equilibrium geometries (no added random displacements) """
 
+    reactants = read('r.xyz', ':')
+    products = read('p.xyz', ':')
+    transition_states = read('ts.xyz', ':')
 
+    valid = [reactants[i] for i in valid_id] \
+        + [transition_states[i] for i in valid_id] \
+        + [products[i] for i in valid_id]
+        
+    test = [reactants[i] for i in test_id] \
+        + [transition_states[i] for i in test_id] \
+        + [products[i] for i in test_id]
 
-train = e0s \
-      + [r_0[i] for i in train_id] \
-      + [ts_0[i] for i in train_id] \
-      + [p_0[i] for i in train_id]
+    os.makedirs(args.output, exist_ok=True)
 
-valid = [r_0[i] for i in valid_id] \
-      + [ts_0[i] for i in valid_id] \
-      + [p_0[i] for i in valid_id]
-    
-test = [r_0[i] for i in test_id] \
-      + [ts_0[i] for i in test_id] \
-      + [p_0[i] for i in test_id]
+    write(f'{args.output}/train.xyz', train)
+    write(f'{args.output}/valid.xyz', valid)
+    write(f'{args.output}/test.xyz', test)
 
-write('./no-rattle/train.xyz', train)
-write('./no-rattle/valid.xyz', valid)
-write('./no-rattle/test.xyz', test)
+    """ Write test set reactants, products, and TS separately for NEB calculations """
 
-
-''' Generate training set for stdev 0.02, use unrattled valid and test '''
-
-
-r_rattled = read('./rattled-stdev-0.02/r-mp2.xyz', ':')
-p_rattled = read('./rattled-stdev-0.02/p-mp2.xyz', ':')
-ts_rattled = read('./rattled-stdev-0.02/ts-mp2.xyz', ':')
-
-
-train = e0s \
-      + [r_rattled[i] for i in train_id] \
-      + [ts_rattled[i] for i in train_id] \
-      + [p_rattled[i] for i in train_id]
-
-valid = [r_0[i] for i in valid_id] \
-      + [ts_0[i] for i in valid_id] \
-      + [p_0[i] for i in valid_id]
-    
-test = [r_0[i] for i in test_id] \
-      + [ts_0[i] for i in test_id] \
-      + [p_0[i] for i in test_id]
-
-write('./rattled-stdev-0.02/train.xyz', train)
-write('./rattled-stdev-0.02/valid.xyz', valid)
-write('./rattled-stdev-0.02/test.xyz', test)
+    write('r-test.xyz', [reactants[i] for i in test_id])
+    write('ts-test.xyz', [transition_states[i] for i in test_id])
+    write('p-test.xyz', [products[i] for i in test_id])
 
 
-''' Generate training set for stdev 0.05, use unrattled valid and test '''
-
-
-r_rattled = read('./rattled-stdev-0.05/r-mp2.xyz', ':')
-p_rattled = read('./rattled-stdev-0.05/p-mp2.xyz', ':')
-ts_rattled = read('./rattled-stdev-0.05/ts-mp2.xyz', ':')
-
-
-train = e0s \
-      + [r_rattled[i] for i in train_id] \
-      + [ts_rattled[i] for i in train_id] \
-      + [p_rattled[i] for i in train_id]
-
-valid = [r_0[i] for i in valid_id] \
-      + [ts_0[i] for i in valid_id] \
-      + [p_0[i] for i in valid_id]
-    
-test = [r_0[i] for i in test_id] \
-      + [ts_0[i] for i in test_id] \
-      + [p_0[i] for i in test_id]
-
-write('./rattled-stdev-0.05/train.xyz', train)
-write('./rattled-stdev-0.05/valid.xyz', valid)
-write('./rattled-stdev-0.05/test.xyz', test)
-
-write('r-test-mp2.xyz', [r_0[i] for i in test_id])
-write('ts-test-mp2.xyz', [ts_0[i] for i in test_id])
-write('p-test-mp2.xyz', [p_0[i] for i in test_id])
+if __name__=="__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ntrain", default=1422, type=int)
+    parser.add_argument("--nvalid", default=178, type=int)
+    parser.add_argument("--ntest", default=178, type=int)
+    parser.add_argument("--reactants_input", required=True)
+    parser.add_argument("--products_input", required=True)
+    parser.add_argument("--ts_input", required=True)
+    parser.add_argument("--E0s_file", default='e0s.xyz')
+    parser.add_argument("--output", required=True)
+    args = parser.parse_args()
+    main(args)

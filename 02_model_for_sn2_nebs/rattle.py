@@ -1,79 +1,59 @@
 from ase.io import read, write
 import os
+import argparse
 
-reactants = read('r/r-opt.xyz', ':')
-products = read('p/p-opt.xyz', ':')
-t_states = read('ts/ts-selected.xyz', ':')
-
-''' no-rattle '''
-
-if not os.path.exists('no-rattle'):
-    os.system('mkdir no-rattle')
-
-write('no-rattle/r.xyz', reactants)
-write('no-rattle/p.xyz', products)
-write('no-rattle/ts.xyz', t_states)
-
-''' stdev 0.02 '''
-
-r2 = []
-p2 = []
-ts2 = []
-
-seed = 0
-
-for at in reactants:
-    at2 = at.copy()
-    at2.rattle(stdev=0.02, seed=seed)
-    r2.append(at2)
-    seed += 1
-
-for at in products:
-    at2 = at.copy()
-    at2.rattle(stdev=0.02, seed=seed)
-    p2.append(at2)
-    seed += 1
-
-for at in t_states:
-    at2 = at.copy()
-    at2.rattle(stdev=0.02, seed=seed)
-    ts2.append(at2)
-    seed  += 1
-
-if not os.path.exists('rattled-stdev-0.02'):
-    os.system('mkdir rattled-stdev-0.02')
-
-write('./rattled-stdev-0.02/r.xyz', r2)
-write('./rattled-stdev-0.02/p.xyz', p2)
-write('./rattled-stdev-0.02/ts.xyz', ts2)
-
-''' stdev 0.05 '''
-
-r3 = []
-p3 = []
-ts3 = []
-
-for at in reactants:
-    at2 = at.copy()
-    at2.rattle(stdev=0.05, seed=seed)
-    r3.append(at2)
-    seed  += 1
-
-for at in products:
-    at2 = at.copy()
-    at2.rattle(stdev=0.05, seed=seed)
-    p3.append(at2)
-    seed  += 1
-
-for at in t_states:
-    at2 = at.copy()
-    at2.rattle(stdev=0.05, seed=seed)
-    ts3.append(at2)
-    seed  += 1
+def main(args):
     
-if not os.path.exists('rattled-stdev-0.05'):
-    os.system('mkdir rattled-stdev-0.05')
+    reactants = read(args.reactants_input, ':')
+    products = read(args.products_input, ':')
+    transition_states = read(args.ts_input, ':')
 
-write('./rattled-stdev-0.05/r.xyz', r3)
-write('./rattled-stdev-0.05/p.xyz', p3)
-write('./rattled-stdev-0.05/ts.xyz', ts3)
+    write('no-rattle/r.xyz', reactants)
+    write('no-rattle/p.xyz', products)
+    write('no-rattle/ts.xyz', transition_states)
+
+    """ If stdev is 0, simply copy the R, P, TS to the outpur dir """
+    
+    if args.stdev == 0:
+        r_rattled = reactants
+        p_rattled = products
+        ts_rattled = transition_states
+    else:
+        r_rattled = []
+        p_rattled = []
+        ts_rattled = []
+
+        seed = 0
+
+        for at in reactants:
+            at2 = at.copy()
+            at2.rattle(stdev=args.stdev, seed=seed)
+            r_rattled.append(at2)
+            seed += 1
+
+        for at in products:
+            at2 = at.copy()
+            at2.rattle(stdev=args.stdev, seed=seed)
+            p_rattled.append(at2)
+            seed += 1
+
+        for at in transition_states:
+            at2 = at.copy()
+            at2.rattle(stdev=args.stdev, seed=seed)
+            ts_rattled.append(at2)
+            seed  += 1
+
+    os.makedirs(args.output, exist_ok=True)
+    write(f'{args.output}/r.xyz', r_rattled)
+    write(f'{args.output}/p.xyz', p_rattled)
+    write(f'{args.output}/ts.xyz', ts_rattled)
+
+if __name__=="__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--reactants_input", required=True)
+    parser.add_argument("--products_input", required=True)
+    parser.add_argument("--ts_input", required=True)
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--stdev", default=0.02, type=float)
+    args = parser.parse_args()
+    main(args)
