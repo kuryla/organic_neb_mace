@@ -10,7 +10,7 @@
 
 ## Iterative training
 
-Directory `01_iterative_training` contains the initial training set (recatants only) `train.xyz` along with isolated atom energies. The test set `test.xyz` contains transition states that are transferred to the training set in small batches during iterative training.
+Directory `01_iterative_training` contains the initial training set (reactants only) `train.xyz` along with isolated atom energies. The test set `test.xyz` contains transition states that are transferred to the training set in small batches during iterative training.
 
 The script `orca_eval.py` is used to evaluate the MP2 energies and forces and contains the ORCA calculation details.
 
