@@ -1,6 +1,5 @@
 # Repository for "Finding reaction pathways efficiently using reaction databases and active learning".
 
-
 # Table of Contents
 1. [Iterative training](#example)
 2. [Model for finding SN2 reaction NEBs](#example2)
@@ -10,6 +9,8 @@
 
 
 ## Iterative training
+
+Directory `01_iterative_training` contains the initial training set (recatants only) `train.xyz` and test set `test.xyz` from which transition states are transferred to the training set in small batches during iterative training.
 
 ## Model for finding SN2 reaction NEBs
 

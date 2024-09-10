@@ -14,7 +14,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test_fname", help="name of training set file", default="test.xyz")
     parser.add_argument("--train_eval_fname", help="file to evaluate training set MACE energies", default="train_eval.xyz")
     parser.add_argument("--test_eval_fname", help="file to evaluate test set MACE energies", default="test_eval.xyz")
-    parser.add_argument("--mace_dir", help="path top MACE installation", required=True)
+    parser.add_argument("--mace_dir", help="path for MACE installation", required=True)
     parser.add_argument("--num_new_configs", help="number of configurations to transfer to the training set per iteration", type=int, default=45)
     parser.add_argument("--num_iterations", help="number of iterations", type=int, default=15)
     return parser.parse_args()
