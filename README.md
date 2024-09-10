@@ -28,7 +28,7 @@ For the rattled training sets, we need to make R, P, TS configurations with adde
 
 The reactant and product configurations are stored in `r.xyz` and `p.xyz`, respectively.
 
-Use the `make_sets.py` script to make rattled configurations of the reactants and products, calculate their MP2 energies and forces, and make train, valid, test sets.
+Use the `make_sets.py` script to make rattled configurations of the reactants and products, calculate their MP2 energies and forces, and make train, valid, test sets. `train.sh` has the example inputs for `train.py` to generate the sets.
 
 To run the active learning, use `train.sh` which contains example input arguments for the `train.py` script
 
@@ -36,7 +36,7 @@ To run the active learning, use `train.sh` which contains example input argument
 
 The reactant and product configurations are stored in `r.xyz` and `p.xyz`, respectively.
 
-Use the `make_sets.py` script to make rattled configurations of the reactants and products, calculate their MP2 energies and forces, and make train, valid, test sets.
+Use the `make_sets.py` script to make rattled configurations of the reactants and products, calculate their MP2 energies and forces, and make train, valid, test sets. `train.sh` has the example inputs for `train.py` to generate the sets.
 
 To run the active learning, use `train.sh` which contains example input arguments for the `train.py` script
 
