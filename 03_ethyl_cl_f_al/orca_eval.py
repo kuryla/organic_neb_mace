@@ -19,7 +19,7 @@ def get_calc(orca_path, charge=0, mult=1):
         label="orca",
         charge=charge, mult=mult,task='gradient',
         orcasimpleinput='RI-MP2 6-311G(d) autoaux nofrozencore TightSCF engrad',
-        orcablocks='%pal nprocs 1 end \n %scf ConvForced=1 end'
+        orcablocks='%pal nprocs 8 end \n %scf ConvForced=1 end'
     )
     return calc
 

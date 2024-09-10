@@ -8,10 +8,6 @@ def main(args):
     products = read(args.products_input, ':')
     transition_states = read(args.ts_input, ':')
 
-    write('no-rattle/r.xyz', reactants)
-    write('no-rattle/p.xyz', products)
-    write('no-rattle/ts.xyz', transition_states)
-
     """ If stdev is 0, simply copy the R, P, TS to the outpur dir """
     
     if args.stdev == 0:

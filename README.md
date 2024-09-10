@@ -26,7 +26,15 @@ For the rattled training sets, we need to make R, P, TS configurations with adde
 
 ## Active learning on ethyl chloride + fluoride ion
 
+The reactant and product configurations are stored in `r.xyz` and `p.xyz`, respectively.
+
+Use the `make_sets.py` script to make rattled configurations of the reactants and products, calculate their MP2 energies and forces, and make train, valid, test sets.
+
 ## Active learning on ethyl chloride + fluoride ion + 4 H<sub>2</sub>O
+
+The reactant and product configurations are stored in `r.xyz` and `p.xyz`, respectively.
+
+Use the `make_sets.py` script to make rattled configurations of the reactants and products, calculate their MP2 energies and forces, and make train, valid, test sets.
 
 ## Figures
 
