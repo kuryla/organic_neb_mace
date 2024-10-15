@@ -156,3 +156,6 @@ def main():
         else:
             print("No new configuration selected. AL has converged.")
             break
+
+if __name__ == "__main__":
+    main()

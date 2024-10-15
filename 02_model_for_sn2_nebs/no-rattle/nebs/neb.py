@@ -262,14 +262,14 @@ def get_neb_method(neb, method):
     else:
         raise ValueError(f'Bad method: {method}')
 
-def batch_mace_eval(images, calc, device):
+def batch_mace_eval(images, device):
     
     # Load data and prepare input
     atoms_list = images[1:-1]
     configs = [data.config_from_atoms(atoms) for atoms in atoms_list]
     batch_size = min(len(atoms_list), 64)
 
-    model = calc.models[0]
+    model = atoms_list[0].calc.models[0]
     z_table = utils.AtomicNumberTable([int(z) for z in model.atomic_numbers])
 
     data_loader = torch_geometric.dataloader.DataLoader(
@@ -347,13 +347,12 @@ class BaseNEB:
     def __init__(self, images, k=0.1, climb=False, parallel=False,
                  remove_rotation_and_translation=False, world=None,
                  method='aseneb', allow_shared_calculator=False, precon=None,
-                 use_gpu=False, calc=None):
+                 use_gpu=False):
 
         self.images = images
         self.climb = climb
         self.parallel = parallel
         self.allow_shared_calculator = allow_shared_calculator
-        self.calc = calc
         self.use_gpu = use_gpu
 
         for img in images:
@@ -507,7 +506,7 @@ class BaseNEB:
             energies[-1] = images[-1].get_potential_energy()
 
         if self.use_gpu:
-            images[1:-1] = batch_mace_eval(images=images, calc=self.calc, device='cuda')
+            images[1:-1] = batch_mace_eval(images=images, device='cuda')
             for i, image in enumerate(images[1:-1]):
                 forces[i] = image.arrays['forces']
                 energies[i+1] = image.info['energy']
@@ -722,8 +721,7 @@ class BaseNEB:
 class DyNEB(BaseNEB):
     def __init__(self, images, k=0.1, fmax=0.05, climb=False, parallel=False,
                  remove_rotation_and_translation=False, world=None,
-                 dynamic_relaxation=True, scale_fmax=0., method='aseneb',
-                 allow_shared_calculator=False, precon=None, use_gpu=False, calc=None):
+                 dynamic_relaxation=True, scale_):
         """
         Subclass of NEB that allows for scaled and dynamic optimizations of
         images. This method, which only works in series, does not perform
@@ -754,7 +752,7 @@ class DyNEB(BaseNEB):
             images, k=k, climb=climb, parallel=parallel,
             remove_rotation_and_translation=remove_rotation_and_translation,
             world=world, method=method,
-            allow_shared_calculator=allow_shared_calculator, precon=precon, use_gpu=use_gpu, calc=calc)
+            allow_shared_calculator=allow_shared_calculator, precon=precon, use_gpu=use_gpu)
         self.fmax = fmax
         self.dynamic_relaxation = dynamic_relaxation
         self.scale_fmax = scale_fmax
@@ -836,7 +834,7 @@ class NEB(DyNEB):
     def __init__(self, images, k=0.1, climb=False, parallel=False,
                  remove_rotation_and_translation=False, world=None,
                  method='aseneb', allow_shared_calculator=False,
-                 precon=None, use_gpu=False, calc=None, **kwargs):
+                 precon=None, use_gpu=False, **kwargs):
         """Nudged elastic band.
 
         Paper I:
@@ -910,7 +908,7 @@ class NEB(DyNEB):
             remove_rotation_and_translation=remove_rotation_and_translation,
             world=world, method=method,
             allow_shared_calculator=allow_shared_calculator,
-            precon=precon, use_gpu=use_gpu, calc=calc,
+            precon=precon, use_gpu=use_gpu,
             **defaults)
 
 
